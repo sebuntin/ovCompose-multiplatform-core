@@ -168,9 +168,11 @@ void OHRenderNodeDrawClipRect(float left, float top, float right, float bottom,
     }
 
 void OHRenderNodeDrawLine(float x1, float y1, float x2, float y2,
-                          OH_Drawing_ShaderEffect *shader,
+                          NativeBasicShader* shader,
                           const RenderNodeSaveState *saveState,
-                          BaseRenderNode *renderNodeForDrawing) {
+                          BaseRenderNode *renderNodeForDrawing,
+                          androidx::compose::ui::arkui::utils::OHComposeNativePaint* paint) {
+    const float strokeWidth = paint->strokeWidth;
     int32_t x = std::min(x1, x2);
     int32_t y = std::min(y1, y2);
     int32_t width = abs(x2 - x1);
@@ -183,15 +185,7 @@ void OHRenderNodeDrawLine(float x1, float y1, float x2, float y2,
         ->setSize(width, height);
 
     if (!shader) {
-        renderNodeForDrawing->drawLine(x1, y1, x2, y2);
-        //            [(TMMNativeLineLayer *)layerForDrawing drawWithPointX1:pointX1
-        //            pointY1:pointY1
-        //            pointX2:pointX2
-        //            pointY2:pointY2
-        //            lineWidth:[paint strokeWidth]
-        //            lineColor:[paint colorFromColorValue]
-        //            strokeCap:[paint strokeCap]
-        //            density:density];
+        renderNodeForDrawing->drawLine(x1, y1, x2, y2, strokeWidth, paint->color, paint->strokeCap);
     } else {
         //            [(TMMNativeLineGradientLayer *)layerForDrawing drawWithPointX1:pointX1
         //            pointY1:pointY1

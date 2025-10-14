@@ -174,8 +174,8 @@ namespace androidx::compose::ui::arkui::utils {
         bool isDirty = updateItem.isDirty;
         OH::BaseRenderNode *renderNodeForDrawing = nullptr;
         if (isDirty) {
-            renderNodeForDrawing = _pictureRecorder.getOrCreateLayerForDrawing(updateItem.drawingType, updateItem.itemHash);
-            OH::OHRenderNodeDrawLine(x1, y1, x2, y2, paint->shader, &(updateItem.saveState), renderNodeForDrawing);
+            renderNodeForDrawing = _pictureRecorder.getOrCreateRenderNodeForDrawing(updateItem.drawingType, updateItem.itemHash);
+            OH::OHRenderNodeDrawLine(x1, y1, x2, y2, paint->shader, &(updateItem.saveState), renderNodeForDrawing, paint);
         }
     }
 
