@@ -24,10 +24,20 @@ public:
     void DestroyNativeRoot();
     void CreateNativeRoot(napi_env env, napi_value nodeContent);
     void onResize(int32_t width, int32_t height);
+    void CreateArkUIView(napi_env env, napi_value createArkUiViewCallback);
+    napi_value CreateMixedNode(const char* name, napi_value parameter);
 
     arkui_utils::OHNativeCanvasProxyFactory* createNativeCanvasProxyFactory();
 
 private:
+    napi_value stringToNAPIValue(napi_env env, const char* str);
+    napi_value callArkUIVIewMethod(napi_env env, napi_value object, const char* method_name,
+            size_t argc, napi_value* argv);
+    napi_value getArkUIViewProperty(napi_env env, napi_value object, const char* property_name);
+
+    napi_env m_env = nullptr;
+    napi_ref m_createArkUIView = nullptr;
+    ArkUI_NodeHandle m_mixedHandle;
     ArkUI_NodeContentHandle m_contentHandle = nullptr;
     ArkUI_NodeHandle m_customNodeHandle = nullptr;
     std::unique_ptr<OH::BaseRenderNode> m_renderRootNode = nullptr;

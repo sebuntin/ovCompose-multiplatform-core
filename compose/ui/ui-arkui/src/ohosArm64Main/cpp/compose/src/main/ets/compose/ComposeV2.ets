@@ -32,6 +32,7 @@ import { WindowStageManager } from './window/WindowStageManager';
 
 import { NodeContent } from '@ohos.arkui.node'
 import { displaySync } from '@kit.ArkGraphics2D';
+import { ArkUIView } from './ArkUIView';
 
 let GeneratedIndex = 0;
 
@@ -71,8 +72,6 @@ export struct ComposeV2 {
   private densityMessenger: DensityManager | null = null
   private windowStateManager: WindowStageManager | null = null
   @State private textToolbarParams: TextToolbarParams = new TextToolbarParams()
-  private static pageIsShowing: boolean = false;
-  private static canDestroyPicture: boolean = true;
   private static nodeIsDrawing: boolean = false;
 
   aboutToAppear() {
@@ -90,20 +89,12 @@ export struct ComposeV2 {
     this.registerDisplayVsync()
     //创建根节点
     this.requireController().createNativeRoot(this.composeRootNodeContent)
-
-    if (ComposeV2.pageIsShowing) {
-      ComposeV2.canDestroyPicture = false;
-    }
-    ComposeV2.pageIsShowing = true;
+    AppStorage.setOrCreate<UIContext>("context", this.getUIContext());
+    this.requireController().createArkUIView(this.buildArkUIView)
+    console.log("xxxTest ComposeV2 ")
   }
 
   aboutToDisappear() {
-    if (ComposeV2.canDestroyPicture) {
-    } else {
-      console.warn(`warning destroy node: page is appear twice but no disappear--picture will be delete after page appear`)
-    }
-    ComposeV2.canDestroyPicture = true;
-    ComposeV2.pageIsShowing = false;
     this.requireController().destroyNativeRoot();
     //this.canvasNodeController.dispose();
     this.requireController().aboutToDisappear()
@@ -121,6 +112,16 @@ export struct ComposeV2 {
       }
       this.displaySync?.on("frame", callback);
       this.displaySync?.start();
+  }
+
+  buildArkUIView(name: string, parameter: Object): ArkUIView | null {
+      // if (!this.getUIContext()) {
+      //   return null
+      // }
+      let uiContent = AppStorage.get<UIContext>("context");
+      const arkUIView = new ArkUIView(uiContent!!, name, parameter)
+      console.log("xxxTest arkTS arkUIView = " + arkUIView)
+      return arkUIView
   }
 
   notifyRedraw(targetTimestamp: number) {
@@ -174,13 +175,13 @@ export struct ComposeV2 {
       Stack() {
         ContentSlot(this.composeRootNodeContent)
         // 1.back interop container.
-        NodeContainer(this.backRootView)
-          .size({ width: "100%", height: "100%" })
-        // .clipShape(new RectShape({ width: this.xComponentWidth, height: this.xComponentHeight }))
-        // 3.fore interop container.
-        NodeContainer(this.foreRootView).size({ width: '100%', height: '100%' })
-        // 4.touchable interop container.
-        NodeContainer(this.touchableRootView).size({ width: '100%', height: '100%' })
+        // NodeContainer(this.backRootView)
+        //   .size({ width: "100%", height: "100%" })
+        // // .clipShape(new RectShape({ width: this.xComponentWidth, height: this.xComponentHeight }))
+        // // 3.fore interop container.
+        // NodeContainer(this.foreRootView).size({ width: '100%', height: '100%' })
+        // // 4.touchable interop container.
+        // NodeContainer(this.touchableRootView).size({ width: '100%', height: '100%' })
       }
       .backgroundColor(this.bgColor)
       .onTouch(e => {

@@ -61,3 +61,85 @@ arkui_utils::OHNativeCanvasProxyFactory* OHRenderNodeManager::createNativeCanvas
     }
     return m_canvasProxyFactory.get();
 }
+
+
+napi_value OHRenderNodeManager::stringToNAPIValue(napi_env env, const char* str) {
+    napi_value result;
+    napi_status status;
+
+    if (str == NULL) {
+        napi_get_null(env, &result);
+        return result;
+    }
+
+    status = napi_create_string_utf8(env, str, NAPI_AUTO_LENGTH, &result);
+    if (status != napi_ok) {
+        napi_get_undefined(env, &result);
+    }
+
+    return result;
+}
+
+napi_value OHRenderNodeManager::callArkUIVIewMethod(napi_env env, napi_value object, const char* method_name,
+        size_t argc, napi_value* argv) {
+    napi_value method;
+    napi_value method_key;
+
+    napi_create_string_utf8(env, method_name, NAPI_AUTO_LENGTH, &method_key);
+    napi_get_property(env, object, method_key, &method);
+
+    napi_valuetype value_type;
+    napi_typeof(env, method, &value_type);
+
+    if (value_type != napi_function) {
+        napi_value undefined;
+        napi_get_undefined(env, &undefined);
+        return undefined;
+    }
+
+    napi_value result;
+    napi_call_function(env, object, method, argc, argv, &result);
+
+    return result;
+}
+
+napi_value OHRenderNodeManager::getArkUIViewProperty(napi_env env, napi_value object, const char* property_name) {
+    napi_value property_value;
+    napi_value key;
+
+    napi_create_string_utf8(env, property_name, NAPI_AUTO_LENGTH, &key);
+
+    napi_status status = napi_get_property(env, object, key, &property_value);
+
+    if (status != napi_ok) {
+        napi_get_undefined(env, &property_value);
+    }
+
+    return property_value;
+}
+
+void OHRenderNodeManager::CreateArkUIView(napi_env env, napi_value createArkUiViewCallback) {
+    m_env = env;
+    napi_create_reference(env, createArkUiViewCallback, 1, &m_createArkUIView);
+}
+
+napi_value OHRenderNodeManager::CreateMixedNode(const char* name, napi_value parameter) {
+    napi_handle_scope scope;
+    napi_open_handle_scope(m_env, &scope);
+    napi_value result = nullptr;
+    napi_value composeName = stringToNAPIValue(m_env, name);
+    napi_value argv[2] = {composeName, parameter};
+    napi_value createArkUIView = nullptr;
+    napi_get_reference_value(m_env, m_createArkUIView, &createArkUIView);
+
+    napi_call_function(m_env, nullptr, createArkUIView, 2, argv, &result);
+    auto view = getArkUIViewProperty(m_env, result, "frameNode");
+    LOGI("xxxTest getArkUIViewProperty = %{public}p", view);
+    OH_ArkUI_GetNodeHandleFromNapiValue(m_env, view, &m_mixedHandle);
+    LOGI("xxxTest m_mixedHandle = %{public}p", m_mixedHandle);
+    NativeNodeApi::getInstance()->addChild(m_customNodeHandle, m_mixedHandle);
+    return result;
+}
+
+
+

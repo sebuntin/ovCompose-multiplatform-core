@@ -16,19 +16,67 @@
  */
 
 #include <napi/native_api.h>
+#include <arkui/native_type.h>
 #include <native_drawing/drawing_types.h>
-
+#include "../constants/oh_native_enums.h"
 #include "../constants/oh_native_constants.h"
 
 #ifndef ANDROIDX_COMPOSE_UI_ARKUI_UTILS_OHNATIVECANVAS_EXPORT_H
 #define ANDROIDX_COMPOSE_UI_ARKUI_UTILS_OHNATIVECANVAS_EXPORT_H
 
 EXTERN_C_START
+// C 接口定义
+typedef void* InteractionUIViewHandle;
+//
+//typedef struct {
+//    double x;
+//    double y;
+//} DpOffset;
+//
+//typedef HitTestViewType (*PointInsideCallback)(void* context, double x, double y, void* event);
+//typedef void (*TouchesEventCallback)(void* context, void* view, void* event, int phase);
+//typedef void (*UpdateTouchesCountCallback)(void* context, int count);
+//typedef bool (*CheckBoundsCallback)(void* context, DpOffset point);
+//typedef void (*KeyboardEventCallback)(void* context, void* keyboardEvent);
+//
+//InteractionUIViewHandle createInteractionUIView(
+//        void* context,
+//        PointInsideCallback pointInsideCallback,
+//        TouchesEventCallback touchesEventCallback,
+//        UpdateTouchesCountCallback updateTouchesCallback,
+//        CheckBoundsCallback checkBoundsCallback,
+//        KeyboardEventCallback keyboardEventCallback,
+//        bool becomeFirstResponder,
+//        bool drawInSkia
+//);
+//
+//void disposeInteractionUIView(InteractionUIViewHandle handle);
+//void destroyInteractionUIView(InteractionUIViewHandle handle);
+//
+//void touchesBegan(InteractionUIViewHandle handle, void* touches, void* event);
+//void touchesEnded(InteractionUIViewHandle handle, void* touches, void* event);
+//void touchesMoved(InteractionUIViewHandle handle, void* touches, void* event);
+//void touchesCancelled(InteractionUIViewHandle handle, void* touches, void* event);
+//void pressesBegan(InteractionUIViewHandle handle, void* presses, void* event);
+//void pressesEnded(InteractionUIViewHandle handle, void* presses, void* event);
+//void* hitTest(InteractionUIViewHandle handle, double x, double y, void* event);
+
+
 OHNativeCanvasProxy_Handle androidx_compose_ui_arkui_utils_createOHNativeCanvasProxy(void *factory);
 void androidx_compose_ui_arkui_utils_DisposeOHNativeCanvasProxy(OHNativeCanvasProxy_Handle proxyHandle);
 void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_beginDraw(OHNativeCanvasProxy_Handle proxyHandle);
 OHComposeNativePaint_Handle androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_Paint(OHNativeCanvasProxy_Handle proxy);
 void androidx_compose_ui_arkui_utils_DisposeOHComposeNativePaint(OHComposeNativePaint_Handle paintHandle);
+
+//interop methods
+InteropWrapNode_Handle androidx_compose_ui_arkui_utils_create_interop_wrap_node();
+void androidx_compose_ui_arkui_utils_bind_compose_interop_container(InteropWrapNode_Handle wrappingView, ArkUI_NodeHandle view);
+void androidx_compose_ui_arkui_utils_add_child(InteropWrapNode_Handle wrappingView, ArkUI_NodeHandle view);
+void androidx_compose_ui_arkui_utils_remove_from_parent(InteropWrapNode_Handle wrappingView);
+void androidx_compose_ui_arkui_utils_set_frame(float width, float height);
+BaseRenderNode_Handle androidx_compose_ui_arkui_utils_get_interop_render_node(InteropWrapNode_Handle wrappingView);
+void androidx_compose_ui_arkui_utils_set_user_interaction_enable(InteropWrapNode_Handle wrappingView, bool interactionEnable);
+napi_value androidx_compose_ui_arkui_utils_create_mixed_view(const char* name, napi_value parameter);
 
 // OHNativeCanvasProxy state operations
 void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_save(OHNativeCanvasProxy_Handle proxy);

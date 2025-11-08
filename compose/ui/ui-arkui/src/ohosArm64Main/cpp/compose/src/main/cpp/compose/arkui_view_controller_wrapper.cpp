@@ -353,10 +353,28 @@ static napi_value onResize(napi_env env, napi_callback_info info) {
     return nullptr;
 }
 
+
+
 static void bindFunction(napi_env env, napi_value object, const char *functionName, napi_callback functionCallback) {
     napi_value functionValue = nullptr;
     napi_create_function(env, functionName, NAPI_AUTO_LENGTH, functionCallback, nullptr, &functionValue);
     napi_set_named_property(env, object, functionName, functionValue);
+}
+
+static napi_value CreateArkUIView(napi_env env, napi_callback_info info) {
+    size_t argc = 1;
+    napi_value args[1] = {nullptr};
+    napi_value thisArg = nullptr;
+    napi_get_cb_info(env, info, &argc, args, &thisArg, nullptr);
+
+    OHRenderNodeManager *instance = OHRenderNodeManager::GetInstance();
+    instance -> CreateArkUIView(env, args[0]);
+    void *controller = nullptr;
+    napi_unwrap(env, thisArg, &controller);
+    androidx::compose::ui::arkui::utils::OHNativeCanvasProxyFactory *factory
+            = instance -> createNativeCanvasProxyFactory();
+    ArkUIViewController_setNativeCanvasFactory(reinterpret_cast<ArkUIViewController *>(controller), factory);
+    return nullptr;
 }
 
 napi_value Wrapped(napi_env env, void *nativeController) {
@@ -386,6 +404,7 @@ napi_value Wrapped(napi_env env, void *nativeController) {
     bindFunction(env, result, "notifyRedraw", NotifyRedraw);
     bindFunction(env, result, "createNativeRoot", CreateNativeRoot);
     bindFunction(env, result, "destroyNativeRoot", DestroyNativeRoot);
+    bindFunction(env, result, "createArkUIView", CreateArkUIView);
     return result;
 }
 } // namespace androidx::compose::ui::arkui::utils::ArkUIViewControllerWrapper
