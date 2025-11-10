@@ -39,6 +39,7 @@ export class ArkUIView extends ArkUINode {
   builder: ArkUIBuilder
   builderNode: BuilderNode<Object[]>
   constraint: LayoutConstraint | null = null
+  frameNode: FrameNode | null = null
 
 
   //region Native Api
@@ -68,6 +69,8 @@ export class ArkUIView extends ArkUINode {
 
     this.appendChild(builderNode.getFrameNode())
     this.builderNode = builderNode
+    this.frameNode = builderNode.getFrameNode()
+    console.log("xxxTest arkTS frameNode = " + this.frameNode)
   }
 
   updateArkUIParameter(parameter: Object) {
