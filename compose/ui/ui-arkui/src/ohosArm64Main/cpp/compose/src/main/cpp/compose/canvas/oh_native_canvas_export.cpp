@@ -88,6 +88,34 @@ void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawCircle(OHNativeCanv
     canvasProxy->drawCircle(centerX, centerY, radius, nativePaint);
 }
 
+void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawOval(OHNativeCanvasProxy_Handle proxy, float left,
+                                                                  float top, float right, float bottom,
+                                                                  OHComposeNativePaint_Handle paint) {
+    LOGI("androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawOval: start");
+    auto nativePaint = reinterpret_cast<androidx::compose::ui::arkui::utils::OHComposeNativePaint *>(paint);
+    auto canvasProxy = reinterpret_cast<androidx::compose::ui::arkui::utils::OHNativeCanvasProxy *>(proxy);
+    canvasProxy->drawOval(left, top, right, bottom, nativePaint);
+}
+
+void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawArc(OHNativeCanvasProxy_Handle proxy, float left,
+                                                                 float top, float right, float bottom,
+                                                                 float startAngle, float sweepAngle, bool useCenter,
+                                                                 OHComposeNativePaint_Handle paint) {
+    LOGI("androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawArc: start");
+    auto nativePaint = reinterpret_cast<androidx::compose::ui::arkui::utils::OHComposeNativePaint *>(paint);
+    auto canvasProxy = reinterpret_cast<androidx::compose::ui::arkui::utils::OHNativeCanvasProxy *>(proxy);
+    canvasProxy->drawArc(left, top, right, bottom, startAngle, sweepAngle, useCenter, nativePaint);
+}
+
+void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawPath(OHNativeCanvasProxy_Handle proxy,
+                                                                  OH_Drawing_Path_Handle path,
+                                                                  OHComposeNativePaint_Handle paint) {
+    LOGI("androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawPath: start");
+    auto nativePaint = reinterpret_cast<androidx::compose::ui::arkui::utils::OHComposeNativePaint *>(paint);
+    auto canvasProxy = reinterpret_cast<androidx::compose::ui::arkui::utils::OHNativeCanvasProxy *>(proxy);
+    canvasProxy->drawPath(path, nativePaint);
+}
+
 void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawLine(OHNativeCanvasProxy_Handle proxy, float x1, float y1,
                                                                   float x2, float y2,
                                                                   OHComposeNativePaint_Handle paint) {

@@ -57,7 +57,10 @@ typedef enum {
     LineNode,
     ParagraphNode,
     LineGradientNode,
-    RectGradientNode
+    RectGradientNode,
+    OvalNode,
+    ArcNode,
+    PathNode
     // TODO: 每实现一个BaseRenderNode的派生类，就需要在此处添加对应的枚举值
 } OH_DrawingNode_Type;
 

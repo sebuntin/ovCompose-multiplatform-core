@@ -16,17 +16,21 @@ public:
     OH_DrawingNode_Type getType() override;
 
 private:
-    void createOrUpdateLeftTopPosProperty(float left, float top);
-    void createOrUpdateRightBottomPosProperty(float right, float bottom);
-    void createOrUpdateStrokeWidthProperty(float strokeWidth);
+    void invalidate();
     void initModifier() override;
 
-    ArkUI_Vector2PropertyHandle leftTopPosProperty_ = nullptr;
-    ArkUI_Vector2PropertyHandle rightBottomProperty_ = nullptr;
-    ArkUI_FloatPropertyHandle strokeWidthProperty_ = nullptr;
-    ArkUI_RenderContentModifierHandle modifier_ = nullptr;
+    // 普通成员变量存储属性值
+    float left_ = 0.0f;
+    float top_ = 0.0f;
+    float right_ = 0.0f;
+    float bottom_ = 0.0f;
+    float strokeWidth_ = 0.0f;
     NativeBasicShader *shader = nullptr;
-    OH_Native_Draw_PaintingStyle paintingStyle;
+    OH_Native_Draw_PaintingStyle paintingStyle = OH_Native_Draw_PaintingStyle::Fill;
+
+    // 只保留一个PropertyHandle用于触发onDraw
+    ArkUI_FloatPropertyHandle invalidateCountProperty_ = nullptr;
+    ArkUI_RenderContentModifierHandle modifier_ = nullptr;
 };
 } // namespace OH
 #endif

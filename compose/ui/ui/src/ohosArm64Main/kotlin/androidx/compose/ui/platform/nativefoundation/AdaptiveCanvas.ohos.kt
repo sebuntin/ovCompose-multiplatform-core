@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathType
 import androidx.compose.ui.graphics.PointMode
 import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.Vertices
@@ -270,10 +271,13 @@ internal class AdaptiveCanvas(
     }
 
     override fun drawOval(left: Float, top: Float, right: Float, bottom: Float, paint: Paint) {
-        // TODO("Not yet implemented")
-        LogPrintUtil.verbose {
-            "AdaptiveCanvas::drawRoundRect, " +
-                    "left: $left, top: $top, right: $right, bottom: $bottom, paint: $paint"
+        TraceUtil.traceSync("AdaptiveCanvas:drawOval") {
+            nativePaint.sync(paint)
+            nativeCanvasProxy.drawOval(left, top, right, bottom, nativePaint)
+            LogPrintUtil.verbose {
+                "AdaptiveCanvas::drawOval, " +
+                        "left: $left, top: $top, right: $right, bottom: $bottom, paint: $paint"
+            }
         }
     }
 
@@ -295,18 +299,31 @@ internal class AdaptiveCanvas(
         useCenter: Boolean,
         paint: Paint
     ) {
-        // TODO("Not yet implemented")
-        LogPrintUtil.verbose {
-            "AdaptiveCanvas::drawArc, " +
-                    "left: $left, top: $top, right: $right, bottom: $bottom, " +
-                    "startAngle: $startAngle, sweepAngle: $sweepAngle, " +
-                    "useCenter: $useCenter, paint: $paint"
+        TraceUtil.traceSync("AdaptiveCanvas:drawArc") {
+            nativePaint.sync(paint)
+            nativeCanvasProxy.drawArc(left, top, right, bottom, startAngle, sweepAngle, useCenter, nativePaint)
+            LogPrintUtil.verbose {
+                "AdaptiveCanvas::drawArc, " +
+                        "left: $left, top: $top, right: $right, bottom: $bottom, " +
+                        "startAngle: $startAngle, sweepAngle: $sweepAngle, " +
+                        "useCenter: $useCenter, paint: $paint"
+            }
         }
     }
 
     override fun drawPath(path: Path, paint: Paint) {
-        // TODO("Not yet implemented")
-        LogPrintUtil.verbose { "AdaptiveCanvas::drawPath, path: $path, paint: $paint" }
+        TraceUtil.traceSync("AdaptiveCanvas:drawPath") {
+            nativePaint.sync(paint)
+            // Try to use NativePathImpl first (similar to iOS implementation)
+            path.pathType = PathType.Native
+            val currentPath = path.currentPath
+            if (currentPath is NativePathImpl && currentPath.nativeRef != null) {
+                nativeCanvasProxy.drawPath(currentPath.nativeRef, nativePaint)
+            } else {
+                return
+            }
+            LogPrintUtil.verbose { "AdaptiveCanvas::drawPath, path: $path, paint: $paint" }
+        }
     }
 
     override fun drawImage(image: ImageBitmap, topLeftOffset: Offset, paint: Paint) {

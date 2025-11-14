@@ -76,6 +76,16 @@ void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawRoundRect(OHNativeC
 void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawCircle(OHNativeCanvasProxy_Handle proxy, float centerX,
                                                                     float centerY, float radius,
                                                                     OHComposeNativePaint_Handle paint);
+void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawOval(OHNativeCanvasProxy_Handle proxy, float left,
+                                                                  float top, float right, float bottom,
+                                                                  OHComposeNativePaint_Handle paint);
+void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawArc(OHNativeCanvasProxy_Handle proxy, float left,
+                                                                 float top, float right, float bottom,
+                                                                 float startAngle, float sweepAngle, bool useCenter,
+                                                                 OHComposeNativePaint_Handle paint);
+void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawPath(OHNativeCanvasProxy_Handle proxy,
+                                                                  OH_Drawing_Path *path,
+                                                                  OHComposeNativePaint_Handle paint);
 
 // OHComposeNativePaint set paint properties
 void androidx_compose_ui_arkui_utils_OHComposeNativePaint_syncAll(OHComposeNativePaint_Handle paint, float alpha,

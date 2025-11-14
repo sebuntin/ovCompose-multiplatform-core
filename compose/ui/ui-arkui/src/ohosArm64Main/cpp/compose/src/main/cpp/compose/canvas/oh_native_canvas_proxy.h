@@ -32,6 +32,10 @@ public:
                        OHComposeNativePaint *paint);
     void drawLine(float x1, float y1, float x2, float y2, OHComposeNativePaint *paint);
     void drawCircle(float centerX, float centerY, float radius, OHComposeNativePaint *paint);
+    void drawOval(float left, float top, float right, float bottom, OHComposeNativePaint *paint);
+    void drawArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle,
+                 bool useCenter, OHComposeNativePaint *paint);
+    void drawPath(OH_Drawing_Path *path, OHComposeNativePaint *paint);
     void drawLayer(OH::BaseRenderNode *renderNode);
     void drawParagraph(OH::Paragraph *paragraph);
     void clipRect(float left, float top, float right, float bottom, OH_Native_Draw_ClipOp clipOp);

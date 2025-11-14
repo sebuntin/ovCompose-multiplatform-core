@@ -9,8 +9,11 @@
 #include "../constants/oh_native_enums.h"
 #include "../paragraph/oh_native_paragraph.h"
 #include "../render_node/oh_base_render_node.h"
+#include "../render_node/oh_arc_render_node.h"
 #include "../render_node/oh_line_gradient_render_node.h"
 #include "../render_node/oh_line_render_node.h"
+#include "../render_node/oh_oval_render_node.h"
+#include "../render_node/oh_path_render_node.h"
 #include "../render_node/oh_rect_gradient_render_node.h"
 #include "../trace/oh_systrace_section.h"
 #include "../utils/oh_hash_funcs.h"
@@ -39,19 +42,19 @@ namespace OH {
 OH_ALWAYS_INLINE std::unique_ptr<BaseRenderNode> createDrawingRenderNodeFromType(OH_Native_Drawing_Type type) {
     switch (type) {
     case OH_Native_Drawing_Type::DrawingTypeLine:
-        LOGI("OH_Native_Drawing_Type::Line, create LineRenderNode");
         return std::make_unique<LineRenderNode>();
     case OH_Native_Drawing_Type::DrawingTypeShaderLine:
-        LOGI("OH_Native_Drawing_Type::ShaderLine, create LineGradientRenderNode");
         return std::make_unique<LineGradientRenderNode>();
     case OH_Native_Drawing_Type::DrawingTypeShaderRect:
-        LOGI("OH_Native_Drawing_Type::ShaderLine, create RectGradientRenderNode");
         return std::make_unique<RectGradientRenderNode>();
+    case OH_Native_Drawing_Type::DrawingTypeOval:
+        return std::make_unique<OvalRenderNode>();
+    case OH_Native_Drawing_Type::DrawingTypeArc:
+        return std::make_unique<ArcRenderNode>();
+    case OH_Native_Drawing_Type::DrawingTypePath:
+        return std::make_unique<PathRenderNode>();
     case OH_Native_Drawing_Type::DrawingTypeRect:
     case OH_Native_Drawing_Type::DrawingTypeCircle:
-    case OH_Native_Drawing_Type::DrawingTypeOval:
-    case OH_Native_Drawing_Type::DrawingTypeArc:
-    case OH_Native_Drawing_Type::DrawingTypePath:
     case OH_Native_Drawing_Type::DrawingTypeImage:
     case OH_Native_Drawing_Type::DrawingTypeImageRect:
     case OH_Native_Drawing_Type::DrawingTypeImageData:
@@ -165,7 +168,9 @@ public:
                                                               OH_DrawingNode_Type renderNodeType) {
         OH::SystraceSection trace("PictureRecorder:drawRenderNode");
         initPropsIfNeeded();
-        const OH_Native_Drawing_Type drawingType = (renderNodeType == OH_DrawingNode_Type::ParagraphNode) ? OH_Native_Drawing_Type::DrawingTypeDrawTextLayer : OH_Native_Drawing_Type::DrawingTypeDrawLayer;
+        const OH_Native_Drawing_Type drawingType = (renderNodeType == OH_DrawingNode_Type::ParagraphNode)
+                                                       ? OH_Native_Drawing_Type::DrawingTypeDrawTextLayer
+                                                       : OH_Native_Drawing_Type::DrawingTypeDrawLayer;
 
         const uint64_t renderNodeUniqueHash = renderNode->getHash();
 

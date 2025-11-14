@@ -4,6 +4,7 @@ import androidx.compose.common.interop.LogPrintUtil
 import androidx.compose.ui.arkui.utils.BaseRenderNode_Handle
 import androidx.compose.ui.arkui.utils.Boolean
 import androidx.compose.ui.arkui.utils.OHNativeCanvasProxy_Handle
+import androidx.compose.ui.arkui.utils.OH_Drawing_Path_Handle
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_DisposeOHNativeCanvasProxy
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_applyTransformMatrix
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_beginDraw
@@ -13,6 +14,9 @@ import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeC
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_attachToRootView
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_clipRect
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawCircle
+import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawOval
+import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawArc
+import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawPath
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawLayerWithSubproxy
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_setParent
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawLine
@@ -27,6 +31,7 @@ import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeC
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_setPosition
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_translate
 import kotlin.native.ref.createCleaner
+import kotlinx.cinterop.COpaquePointer
 
 /**
  * 封装 OHNativeCanvasProxy_Handle 结构体指针的 Kotlin 代理类
@@ -251,6 +256,53 @@ class OHNativeCanvasProxy(private val handle: OHNativeCanvasProxy_Handle?) {
         }
     }
 
+    fun drawOval(left: Float, top: Float, right: Float, bottom: Float, nativePaint: OHComposeNativePaint) {
+        handle?.let {
+            androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawOval(
+                proxy = it,
+                left = left,
+                top = top,
+                right = right,
+                bottom = bottom,
+                paint = nativePaint.handle
+            )
+        }
+    }
+
+    fun drawArc(
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+        startAngle: Float,
+        sweepAngle: Float,
+        useCenter: Boolean,
+        nativePaint: OHComposeNativePaint
+    ) {
+        handle?.let {
+            androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawArc(
+                proxy = it,
+                left = left,
+                top = top,
+                right = right,
+                bottom = bottom,
+                startAngle = startAngle,
+                sweepAngle = sweepAngle,
+                useCenter = useCenter,
+                paint = nativePaint.handle
+            )
+        }
+    }
+
+    fun drawPath(path: OH_Drawing_Path_Handle, nativePaint: OHComposeNativePaint) {
+        handle?.let {
+            androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawPath(
+                proxy = it,
+                path = path,
+                paint = nativePaint.handle
+            )
+        }
+    }
 
     fun setParent(parentProxy: OHNativeCanvasProxy) {
         handle?.let {
