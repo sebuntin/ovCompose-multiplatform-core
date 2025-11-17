@@ -327,8 +327,30 @@ internal class AdaptiveCanvas(
     }
 
     override fun drawImage(image: ImageBitmap, topLeftOffset: Offset, paint: Paint) {
-        // TODO("Not yet implemented")
-        LogPrintUtil.verbose { "AdaptiveCanvas::drawImage, image: $image, topLeftOffset: $topLeftOffset, paint: $paint" }
+        TraceUtil.traceSync("AdaptiveCanvas:drawImage") {
+            nativePaint.sync(paint)
+            // 参考iOS实现：drawImage简化为调用drawImageRect
+            // srcRect = (0, 0, image.width, image.height)
+            // dstRect = (topLeftOffset.x, topLeftOffset.y, image.width, image.height)
+            val pixelMap = image.asNativePixelMap()
+            if (pixelMap == null) {
+                LogPrintUtil.verbose { "AdaptiveCanvas::drawImage: failed to convert ImageBitmap to NativePixelMap, image: $image (${image.width}x${image.height})" }
+                return
+            }
+            nativeCanvasProxy.drawImageRect(
+                pixelMap = pixelMap,
+                srcX = 0,
+                srcY = 0,
+                srcWidth = image.width,
+                srcHeight = image.height,
+                dstX = topLeftOffset.x.toInt(),
+                dstY = topLeftOffset.y.toInt(),
+                dstWidth = image.width,
+                dstHeight = image.height,
+                nativePaint
+            )
+            LogPrintUtil.verbose { "AdaptiveCanvas::drawImage, image: $image, topLeftOffset: $topLeftOffset, paint: $paint" }
+        }
     }
 
     override fun drawImageRect(
@@ -339,11 +361,35 @@ internal class AdaptiveCanvas(
         dstSize: IntSize,
         paint: Paint
     ) {
-        // TODO("Not yet implemented")
-        LogPrintUtil.verbose {
-            "AdaptiveCanvas::drawImageRect, " +
-                    "image: $image, srcOffset: $srcOffset, srcSize: $srcSize" +
-                    "dstOffset: $dstOffset, dstSize: $dstSize, paint: $paint"
+        TraceUtil.traceSync("AdaptiveCanvas:drawImageRect") {
+            nativePaint.sync(paint)
+            val pixelMap = image.asNativePixelMap()
+            if (pixelMap == null) {
+                LogPrintUtil.verbose {
+                    "AdaptiveCanvas::drawImageRect: failed to convert ImageBitmap to NativePixelMap, " +
+                            "image: $image (${image.width}x${image.height}), " +
+                            "srcOffset: $srcOffset, srcSize: $srcSize, " +
+                            "dstOffset: $dstOffset, dstSize: $dstSize"
+                }
+                return
+            }
+            nativeCanvasProxy.drawImageRect(
+                pixelMap = pixelMap,
+                srcX = srcOffset.x,
+                srcY = srcOffset.y,
+                srcWidth = srcSize.width,
+                srcHeight = srcSize.height,
+                dstX = dstOffset.x,
+                dstY = dstOffset.y,
+                dstWidth = dstSize.width,
+                dstHeight = dstSize.height,
+                nativePaint
+            )
+            LogPrintUtil.verbose {
+                "AdaptiveCanvas::drawImageRect, " +
+                        "image: $image, srcOffset: $srcOffset, srcSize: $srcSize" +
+                        "dstOffset: $dstOffset, dstSize: $dstSize, paint: $paint"
+            }
         }
     }
 

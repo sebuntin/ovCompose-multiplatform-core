@@ -40,6 +40,11 @@ void OHRenderNodeDrawPath(OH_Drawing_Path *path, const NativeBasicShader *shader
                           BaseRenderNode *renderNodeForDrawing,
                           const androidx::compose::ui::arkui::utils::OHComposeNativePaint *paint);
 
+void OHRenderNodeDrawImageRect(OH_PixelmapNative *pixelMap, int32_t srcX, int32_t srcY, int32_t srcWidth,
+                               int32_t srcHeight, int32_t dstX, int32_t dstY, int32_t dstWidth, int32_t dstHeight,
+                               const RenderNodeSaveState *saveState, BaseRenderNode *renderNodeForDrawing,
+                               const androidx::compose::ui::arkui::utils::OHComposeNativePaint *paint);
+
 void OHRenderNodeDrawClipRect(float left, float top, float right, float bottom, const RenderNodeSaveState *saveState,
                               BaseRenderNode *renderNodeForDrawing);
 

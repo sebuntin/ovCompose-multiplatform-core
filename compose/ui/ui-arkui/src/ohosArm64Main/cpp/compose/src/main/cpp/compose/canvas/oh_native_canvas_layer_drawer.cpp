@@ -8,6 +8,7 @@
 #include "../constants/oh_native_constants.h"
 #include "../constants/oh_native_enums.h"
 #include "../render_node/oh_arc_render_node.h"
+#include "../render_node/oh_image_display_render_node.h"
 #include "../render_node/oh_line_gradient_render_node.h"
 #include "../render_node/oh_line_render_node.h"
 #include "../render_node/oh_oval_render_node.h"
@@ -255,6 +256,26 @@ void OHRenderNodeDrawPath(OH_Drawing_Path *path, const NativeBasicShader *shader
     } else {
         // TODO: 实现带shader的路径绘制（需要创建PathGradientRenderNode）
     }
+}
+
+void OHRenderNodeDrawImageRect(OH_PixelmapNative *pixelMap, int32_t srcX, int32_t srcY, int32_t srcWidth,
+                               int32_t srcHeight, int32_t dstX, int32_t dstY, int32_t dstWidth, int32_t dstHeight,
+                               const RenderNodeSaveState *saveState, BaseRenderNode *renderNodeForDrawing,
+                               const androidx::compose::ui::arkui::utils::OHComposeNativePaint *paint) {
+    OH::SystraceSection trace("LayerDrawer:OHRenderNodeDrawImageRect");
+    LOGI("OHRenderNodeDrawImageRect: src=(%{public}d, %{public}d, %{public}d, %{public}d), "
+         "dst=(%{public}d, %{public}d, %{public}d, %{public}d)",
+         srcX, srcY, srcWidth, srcHeight, dstX, dstY, dstWidth, dstHeight);
+
+    // 设置RenderNode的transform和translate（ImageDisplayRenderNode会自己设置position和size）
+    renderNodeForDrawing->setTransform(const_cast<float *>(saveState->transform.data()))
+        ->setTranslate(saveState->translateX, saveState->translateY);
+    auto *imageNode = static_cast<ImageDisplayRenderNode *>(renderNodeForDrawing);
+
+    // 调用ImageDisplayRenderNode的drawImageRect方法
+    // ImageDisplayRenderNode会判断是否需要裁剪，并自行设置position和size
+    imageNode->drawImageRect(pixelMap, srcX, srcY, srcWidth, srcHeight, dstX, dstY, dstWidth, dstHeight,
+                             paint->filterQuality);
 }
 
 void OHRenderNodeDrawText(const RenderNodeSaveState *saveState, Paragraph *paragraphNode) {

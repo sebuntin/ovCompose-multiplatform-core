@@ -7,9 +7,9 @@
 #include <vector>
 #include "../constants/oh_native_constants.h"
 #include "../constants/oh_native_enums.h"
-#include "../paragraph/oh_native_paragraph.h"
 #include "../render_node/oh_base_render_node.h"
 #include "../render_node/oh_arc_render_node.h"
+#include "../render_node/oh_image_display_render_node.h"
 #include "../render_node/oh_line_gradient_render_node.h"
 #include "../render_node/oh_line_render_node.h"
 #include "../render_node/oh_oval_render_node.h"
@@ -53,10 +53,11 @@ OH_ALWAYS_INLINE std::unique_ptr<BaseRenderNode> createDrawingRenderNodeFromType
         return std::make_unique<ArcRenderNode>();
     case OH_Native_Drawing_Type::DrawingTypePath:
         return std::make_unique<PathRenderNode>();
+    case OH_Native_Drawing_Type::DrawingTypeImageRect:
+        return std::make_unique<ImageDisplayRenderNode>();
     case OH_Native_Drawing_Type::DrawingTypeRect:
     case OH_Native_Drawing_Type::DrawingTypeCircle:
     case OH_Native_Drawing_Type::DrawingTypeImage:
-    case OH_Native_Drawing_Type::DrawingTypeImageRect:
     case OH_Native_Drawing_Type::DrawingTypeImageData:
     case OH_Native_Drawing_Type::DrawingTypePoints:
     case OH_Native_Drawing_Type::DrawingTypeRowPoints:
@@ -168,9 +169,7 @@ public:
                                                               OH_DrawingNode_Type renderNodeType) {
         OH::SystraceSection trace("PictureRecorder:drawRenderNode");
         initPropsIfNeeded();
-        const OH_Native_Drawing_Type drawingType = (renderNodeType == OH_DrawingNode_Type::ParagraphNode)
-                                                       ? OH_Native_Drawing_Type::DrawingTypeDrawTextLayer
-                                                       : OH_Native_Drawing_Type::DrawingTypeDrawLayer;
+        const OH_Native_Drawing_Type drawingType = (renderNodeType == OH_DrawingNode_Type::ParagraphNode) ? OH_Native_Drawing_Type::DrawingTypeDrawTextLayer : OH_Native_Drawing_Type::DrawingTypeDrawLayer;
 
         const uint64_t renderNodeUniqueHash = renderNode->getHash();
 
