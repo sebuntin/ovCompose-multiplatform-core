@@ -3,6 +3,7 @@ package androidx.compose.ui.platform.nativefoundation
 import androidx.compose.common.interop.LogPrintUtil
 import androidx.compose.common.interop.TraceUtil
 import androidx.compose.ui.arkui.utils.BaseRenderNode_Handle
+import androidx.compose.ui.arkui.utils.InteropWrapNode_Handle
 import androidx.compose.ui.arkui.utils.OHComposeNativePaint_Handle
 import androidx.compose.ui.arkui.utils.OHNativeCanvasProxy_Handle
 import androidx.compose.ui.arkui.utils.OH_Native_Draw_ClipOp
@@ -72,9 +73,13 @@ internal class AdaptiveCanvas(
         }
     }
 
-    override fun drawLayer(renderNodeHandle: BaseRenderNode_Handle) {
-        TraceUtil.traceSync("AdaptiveCanvas:drawLayer") {
-            nativeCanvasProxy.drawLayer(renderNodeHandle)
+    override fun drawInteropLayer(
+        renderNodeHandle: BaseRenderNode_Handle,
+        wrappingViewHandle: InteropWrapNode_Handle,
+        density: Float
+    ) {
+        TraceUtil.traceSync("AdaptiveCanvas:drawInteropLayer") {
+            nativeCanvasProxy.drawInteropLayer(renderNodeHandle, wrappingViewHandle, density)
         }
     }
 

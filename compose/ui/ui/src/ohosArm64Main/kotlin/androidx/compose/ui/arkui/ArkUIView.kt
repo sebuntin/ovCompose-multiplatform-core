@@ -17,6 +17,7 @@
 
 package androidx.compose.ui.arkui
 
+import androidx.compose.common.interop.LogPrintUtil
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -194,6 +195,20 @@ class ArkUIView internal constructor(
         return false
     }
 
+    fun dispatchTouchEventV2(touchEvent: TouchEvent, offsetX: Float, offsetY: Float): Boolean {
+        if (jsArkUIViewRef != null) {
+            return jsArkUIViewRef
+                .call(
+                    "onTouchEventV2",
+                    touchEvent.nativeEvent,
+                    offsetX.nApiValue(),
+                    offsetY.nApiValue()
+                )
+                .asBoolean() ?: false
+        }
+        return false
+    }
+
     fun update(parameter: JsObject) {
         if (jsArkUIViewRef != null) {
             this.parameter = parameter
@@ -249,6 +264,10 @@ class ArkUIViewContainer {
             field = value
             _arkUIView?.onRequestDisallowInterceptTouchEvent = field
         }
+
+    fun dispatchTouchEventV2(touchEvent: TouchEvent, offsetX: Float, offsetY: Float): Boolean {
+        return _arkUIView?.dispatchTouchEventV2(touchEvent, offsetX, offsetY) ?: return false
+    }
 
     fun dispatchTouchEvent(touchEvent: TouchEvent): Boolean {
         return _arkUIView?.dispatchTouchEvent(touchEvent) ?: return false

@@ -191,7 +191,6 @@ public:
         props->renderNodePool[renderNodeUniqueHash] = renderNode;
         renderNode->setHostingHash(rootRenderNodeHash);
         const RenderNodeSaveState &saveState = topState();
-
         return PictureRecorderUpdateInfo{
             .isDirty = true, .itemHash = renderNodeUniqueHash, .drawingType = drawingType, .saveState = saveState};
     }

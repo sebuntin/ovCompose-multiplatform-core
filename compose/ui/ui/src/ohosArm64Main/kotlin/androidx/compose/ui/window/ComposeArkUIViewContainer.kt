@@ -28,6 +28,7 @@ import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.LocalSystemTheme
 import androidx.compose.ui.SystemTheme
 import androidx.compose.ui.arkui.BasicArkUIViewController
+import androidx.compose.ui.arkui.RenderingBackend
 import androidx.compose.ui.extention.DelicateComposeApi
 import androidx.compose.ui.extention.GlobalContentScope
 import androidx.compose.ui.interop.ArkUIInteropContext
@@ -175,12 +176,20 @@ internal class ComposeArkUIViewContainer(
             composeSceneFactory = ::createComposeScene,
             nativeCanvasFactory = nativeCanvasFactory
         )
-        mediator.setContent {
-            ProvideContainerCompositionLocals(this) {
-                requiredBackRootView.TrackInteropContainer {
-                    requiredForeRootView.TrackInteropContainer {
-                        requiredTouchableRootView.TrackInteropContainer {
-                            content()
+        if (configuration.renderingBackend == RenderingBackend.ArkUIRenderNode) {
+            mediator.setContent {
+                ProvideContainerCompositionLocals(this) {
+                    content()
+                }
+            }
+        } else {
+            mediator.setContent {
+                ProvideContainerCompositionLocals(this) {
+                    requiredBackRootView.TrackInteropContainer {
+                        requiredForeRootView.TrackInteropContainer {
+                            requiredTouchableRootView.TrackInteropContainer {
+                                content()
+                            }
                         }
                     }
                 }

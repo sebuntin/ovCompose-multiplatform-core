@@ -87,6 +87,13 @@ export class ArkUIView extends ArkUINode {
     return this.builderNode.postTouchEvent(event)
   }
 
+   onTouchEventV2(e: TouchEvent, x: number, y: number) {
+     const event = transformTouchEvent(e, vp2px)
+     // x, y are already in px coordinates (root space), adjust local position accordingly.
+     offsetTouchEventLocalPosition(event, { x: -x, y: -y })
+     return this.builderNode.postTouchEvent(event)
+   }
+
   reset() {
     const clipMaxValue = 10000;
     this.constraint = null;

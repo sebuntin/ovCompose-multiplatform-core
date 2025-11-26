@@ -48,6 +48,7 @@ void OHNativeCanvasProxy::setParent(const OHNativeCanvasProxy *canvasParentProxy
 
 void OHNativeCanvasProxy::setPosition(const int32_t x, const int32_t y) const {
     OH::SystraceSection trace("OHNativeCanvasProxy:setPosition");
+    LOGI("OHNativeCanvasProxy::setParent: start");
     if (canvasNode_ != nullptr) {
         canvasNode_->setPosition(x, y);
     }
@@ -243,6 +244,7 @@ void OHNativeCanvasProxy::restore() {
 
 void OHNativeCanvasProxy::translate(const float dx, const float dy) {
     OH::SystraceSection trace("OHNativeCanvasProxy:translate");
+    LOGI("OHNativeCanvasProxy::translate: start %{public}p ", this );
     _pictureRecorder.translate(dx, dy);
 }
 
@@ -471,9 +473,11 @@ void OHNativeCanvasProxy::drawPath(OH_Drawing_Path *path, OH::OHComposeNativePai
     }
 }
 
-void OHNativeCanvasProxy::drawLayer(OH::BaseRenderNode *renderNode) {
-    OH::SystraceSection trace("OHNativeCanvasProxy:drawLayer");
+void OHNativeCanvasProxy::drawInteropLayer(OH::BaseRenderNode *renderNode, OH::InteropWrapView *wrapView, float density) {
     OH::PictureRecorderUpdateInfo updateItem = _pictureRecorder.drawRenderNode(renderNode, renderNode->getType());
+    if (wrapView != nullptr) {
+        wrapView->setTranslation(updateItem.saveState.translateX / density, updateItem.saveState.translateY / density);
+    }
 }
 
 void OHNativeCanvasProxy::drawPoints(OH_Drawing_PointMode pointMode, const float *points, size_t pointCount,

@@ -30,6 +30,8 @@
 #include "oh_native_canvas_proxy_factory.h"
 #include "../render_node/oh_async_task_render_node.h"
 #include "oh_native_canvas_layer_drawer.h"
+#include "../interop/oh_native_interop_wrap_node.h"
+#include "../oh_render_node_manager.h"
 
 #include <multimedia/image_framework/image/pixelmap_native.h>
 #include <native_drawing/drawing_canvas.h>
@@ -151,12 +153,15 @@ void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_finishDraw(OHNativeCanv
     LOGI("androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_finishDraw");
 }
 
-void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawLayer(OHNativeCanvasProxy_Handle proxy,
-                                                                   BaseRenderNode_Handle renderNodeHandle) {
+void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawInteropLayer(OHNativeCanvasProxy_Handle proxy,
+                                                                         BaseRenderNode_Handle renderNodeHandle,
+                                                                         InteropWrapNode_Handle wrappingView,
+                                                                         float density) {
     auto renderNode = reinterpret_cast<OH::BaseRenderNode *>(renderNodeHandle);
     auto canvasProxy = reinterpret_cast<androidx::compose::ui::arkui::utils::OHNativeCanvasProxy *>(proxy);
-    canvasProxy->drawLayer(renderNode);
-    LOGI("androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawLayer");
+    auto interopView = reinterpret_cast<OH::InteropWrapView *>(wrappingView);
+    canvasProxy->drawInteropLayer(renderNode, interopView, density);
+    LOGI("androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawInteropLayer");
 }
 
 void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawParagraph(OHNativeCanvasProxy_Handle proxy,
@@ -554,6 +559,26 @@ void androidx_compose_ui_arkui_utils_OHAsyncTaskRenderNode_updatePixelMapOnMainT
 
     auto *asyncTaskNode = reinterpret_cast<OH::AsyncTaskRenderNode *>(renderNodePtr);
     asyncTaskNode->updatePixelMapAndInvalidate(pixelMapPtr);
+}
+
+BaseRenderNode_Handle androidx_compose_ui_arkui_utils_get_interop_render_node(InteropWrapNode_Handle wrappingView) {
+    auto nativeInteropWrapView = reinterpret_cast<OH::InteropWrapView *>(wrappingView);
+    auto baseRenderNode = nativeInteropWrapView->getMixedRendNode();
+    return reinterpret_cast<BaseRenderNode_Handle>(baseRenderNode);
+}
+
+InteropWrapNode_Handle androidx_compose_ui_arkui_utils_create_mixed_view(const char* name, napi_value parameter) {
+    OHRenderNodeManager *instance = OHRenderNodeManager::GetInstance();
+    auto wrapNode = instance -> CreateMixedNode(name, parameter);
+    return reinterpret_cast<InteropWrapNode_Handle>(wrapNode);
+}
+
+napi_value androidx_compose_ui_arkui_utils_get_jsArkUIView(InteropWrapNode_Handle wrappingView) {
+    if (wrappingView == nullptr) {
+        return nullptr;
+    }
+    auto nativeInteropWrapView = reinterpret_cast<OH::InteropWrapView *>(wrappingView);
+    return nativeInteropWrapView->getJsArkUIView();
 }
 
 EXTERN_C_END

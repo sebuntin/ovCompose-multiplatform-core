@@ -4,6 +4,7 @@ package androidx.compose.ui.platform.nativefoundation
 
 import androidx.compose.ui.annotation.InternalComposeApi
 import androidx.compose.ui.arkui.utils.BaseRenderNode_Handle
+import androidx.compose.ui.arkui.utils.InteropWrapNode_Handle
 import androidx.compose.ui.arkui.utils.Boolean
 import androidx.compose.ui.arkui.utils.OHNativeCanvasProxy_Handle
 import androidx.compose.ui.arkui.utils.OH_Drawing_Path_Handle
@@ -13,7 +14,7 @@ import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeC
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_beginDraw
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawRect
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_finishDraw
-import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawLayer
+import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawInteropLayer
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_attachToRootView
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_clipRect
 import androidx.compose.ui.arkui.utils.androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_clipPath
@@ -254,16 +255,18 @@ class OHNativeCanvasProxy(handle: OHNativeCanvasProxy_Handle?) :
         handle?.let { androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_finishDraw(it) }
     }
 
-    /**
-     * 绘制图层
-     */
-    fun drawLayer(renderNodeHandle: BaseRenderNode_Handle) {
-        handle?.let {
-            androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawLayer(
-                proxy = it,
-                renderNodeHandle = renderNodeHandle
-            )
-        }
+    fun drawInteropLayer(
+        renderNodeHandle: BaseRenderNode_Handle,
+        wrappingViewHandle: InteropWrapNode_Handle,
+        density: Float
+    ) {
+        handle ?.let{
+        androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawInteropLayer(
+            it,
+            renderNodeHandle,
+            wrappingViewHandle,
+            density
+        )}
     }
 
     /**

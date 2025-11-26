@@ -91,30 +91,31 @@ void *ArkUIViewController_getXComponentRender(ArkUIViewController *controller) {
     return androidx_compose_ui_arkui_ArkUIViewController_getXComponentRender(controller);
 }
 
-void ArkUIViewController_setRootView(ArkUIViewController *controller, napi_value backRootView, napi_value foreRootView,
+bool ArkUIViewController_setRootView(ArkUIViewController *controller, napi_value backRootView, napi_value foreRootView,
                                      napi_value touchableRootView) {
     if (controller == nullptr) {
         LOGE("ArkUIViewController_setRootView: controller is null");
-        return;
+        return false;
     }
 
     if (backRootView == nullptr) {
         LOGE("ArkUIViewController_setRootView: backRootView is null");
-        return;
+        return false;
     }
 
     if (foreRootView == nullptr) {
         LOGE("ArkUIViewController_setRootView: foreRootView is null");
-        return;
+        return false;
     }
 
     if (touchableRootView == nullptr) {
         LOGE("ArkUIViewController_setRootView: touchableRootView is null");
-        return;
+        return false;
     }
 
     androidx_compose_ui_arkui_ArkUIViewController_setRootView(controller, backRootView, foreRootView,
                                                               touchableRootView);
+    return true;
 }
 
 void ArkUIViewController_aboutToAppear(ArkUIViewController *controller) {

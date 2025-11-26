@@ -6,6 +6,7 @@ import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RenderEffect
+import androidx.compose.ui.arkui.utils.InteropWrapNode_Handle
 
 /*
  * Tencent is pleased to support the open source community by making ovCompose available.
@@ -28,7 +29,11 @@ interface OHOSNativeCanvas : Canvas {
 
     fun onPreDraw()
 
-    fun drawLayer(renderNodeHandle: BaseRenderNode_Handle)
+    fun drawInteropLayer(
+        renderNodeHandle: BaseRenderNode_Handle,
+        wrappingViewHandle: InteropWrapNode_Handle,
+        density: Float
+    )
 
     fun drawParagraph(paragraph: BaseRenderNode_Handle)
 

@@ -6,6 +6,7 @@
 #include "../picture_recorder/oh_native_picture_recorder.h"
 #include "../render_node/oh_base_render_node.h"
 #include "../paint/oh_compose_native_paint.h"
+#include "../interop/oh_native_interop_wrap_node.h"
 
 namespace androidx::compose::ui::arkui::utils {
 class OHNativeCanvasProxy {
@@ -44,7 +45,7 @@ public:
     void drawImageRect(void *pixelMap, int32_t srcX, int32_t srcY, int32_t srcWidth, int32_t srcHeight,
                        int32_t dstX, int32_t dstY, int32_t dstWidth, int32_t dstHeight, OH::OHComposeNativePaint *paint);
     void drawPoints(OH_Drawing_PointMode pointMode, const float *points, size_t pointCount, OH::OHComposeNativePaint *paint);
-    void drawLayer(OH::BaseRenderNode *renderNode);
+    void drawInteropLayer(OH::BaseRenderNode *renderNode, OH::InteropWrapView *wrapView, float density);
     void drawParagraph(OH::Paragraph *paragraph);
     void clipRect(float left, float top, float right, float bottom, OH_Native_Draw_ClipOp clipOp);
     void clipPath(OH_Drawing_Path *path, OH_Native_Draw_ClipOp clipOp);

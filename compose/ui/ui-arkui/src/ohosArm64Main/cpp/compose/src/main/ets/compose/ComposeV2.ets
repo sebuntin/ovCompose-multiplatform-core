@@ -32,6 +32,7 @@ import { WindowStageManager } from './window/WindowStageManager';
 
 import { NodeContent } from '@ohos.arkui.node'
 import { displaySync } from '@kit.ArkGraphics2D';
+import { ArkUIView } from './ArkUIView';
 
 let GeneratedIndex = 0;
 
@@ -47,10 +48,6 @@ export struct ComposeV2 {
   @Require public controller: ArkUIViewController | undefined = undefined
   @Require public libraryName: string | undefined = undefined
   public onBackPressed: (() => boolean) | undefined
-
-  private touchableRootView = new ArkUIRootView();
-  private foreRootView = new ArkUIRootView();
-  private backRootView = new ArkUIRootView();
 
   // 初始化NodeContent对象。
   private composeRootNodeContent: NodeContent = new NodeContent();
@@ -71,12 +68,10 @@ export struct ComposeV2 {
   private densityMessenger: DensityManager | null = null
   private windowStateManager: WindowStageManager | null = null
   @State private textToolbarParams: TextToolbarParams = new TextToolbarParams()
-  private static pageIsShowing: boolean = false;
-  private static canDestroyPicture: boolean = true;
   private static nodeIsDrawing: boolean = false;
 
   aboutToAppear() {
-    this.requireController().init(this.pageId, this.backRootView, this.foreRootView, this.touchableRootView)
+    this.requireController().init(this.pageId, null, null, null)
     this.initMessenger()
     this.requireController().initContext(getContext())
     this.requireController().initUIContext(this.getUIContext())
@@ -86,26 +81,14 @@ export struct ComposeV2 {
     this.keyboardManager = new KeyboardManager(this.getUIAbilityContext(), this.requireController())
     this.keyboardManager.aboutToAppear()
     this.lifecycle.aboutToAppear()
-    //注册vsync信号
     this.registerDisplayVsync()
-    //创建根节点
     this.requireController().createNativeRoot(this.composeRootNodeContent)
-
-    if (ComposeV2.pageIsShowing) {
-      ComposeV2.canDestroyPicture = false;
-    }
-    ComposeV2.pageIsShowing = true;
+    AppStorage.setOrCreate<UIContext>("context", this.getUIContext())
+    this.requireController().registerArkUIViewCreator(this.buildArkUIView)
   }
 
   aboutToDisappear() {
-    if (ComposeV2.canDestroyPicture) {
-    } else {
-      console.warn(`warning destroy node: page is appear twice but no disappear--picture will be delete after page appear`)
-    }
-    ComposeV2.canDestroyPicture = true;
-    ComposeV2.pageIsShowing = false;
     this.requireController().destroyNativeRoot();
-    //this.canvasNodeController.dispose();
     this.requireController().aboutToDisappear()
     this.composeSizeProxy?.unregisterSizeChange()
     this.screenChangeManager.unregisterScreenChange(this)
@@ -123,6 +106,12 @@ export struct ComposeV2 {
       this.displaySync?.start();
   }
 
+  buildArkUIView(name: string, parameter: Object): ArkUIView | null {
+      let uiContent = AppStorage.get<UIContext>("context");
+      const arkUIView = new ArkUIView(uiContent!!, name, parameter);
+      return arkUIView
+  }
+
   notifyRedraw(targetTimestamp: number) {
     if (!ComposeV2.nodeIsDrawing) {
       this.requireController().notifyRedraw(targetTimestamp);
@@ -130,7 +119,6 @@ export struct ComposeV2 {
   }
 
   registerComposeSizeChange() {
-    let size = this.composeSizeProxy!!.getComposeSize();
     this.composeSizeProxy!!.registerSizeChange((width: number, height: number) => {
       this.requireController().onSurfaceChanged(width, height)
     })
@@ -169,22 +157,11 @@ export struct ComposeV2 {
 
   build() {
     Stack() {
-      // there are four layers in stack, consisting of one compose layer and three interop layers.
-      // the stack and touchable interop container can receive touch event.
       Stack() {
         ContentSlot(this.composeRootNodeContent)
-        // 1.back interop container.
-        NodeContainer(this.backRootView)
-          .size({ width: "100%", height: "100%" })
-        // .clipShape(new RectShape({ width: this.xComponentWidth, height: this.xComponentHeight }))
-        // 3.fore interop container.
-        NodeContainer(this.foreRootView).size({ width: '100%', height: '100%' })
-        // 4.touchable interop container.
-        NodeContainer(this.touchableRootView).size({ width: '100%', height: '100%' })
       }
       .backgroundColor(this.bgColor)
       .onTouch(e => {
-        // Just dispatch to compose.
         this.requireController().dispatchTouchEvent(e, true)
       })
       .width("100%")
@@ -193,8 +170,8 @@ export struct ComposeV2 {
         console.info(`Ace: on area change, oldValue is ${JSON.stringify(oldValue)} value is ${JSON.stringify(newValue)}`)
         if (!this.hasCreated) {
           this.requireController().onSurfaceCreated(this.getUIContext().vp2px(newValue.width as number),
-            this.getUIContext().vp2px(newValue.height as number))
-           this.hasCreated = true
+          this.getUIContext().vp2px(newValue.height as number))
+          this.hasCreated = true
         }
         this.requireController().onResize(this.getUIContext().vp2px(newValue.width as number),
           this.getUIContext().vp2px(newValue.height as number));
@@ -212,14 +189,6 @@ export struct ComposeV2 {
       throw new Error("controller is undefined")
     } else {
       return this.controller as InternalArkUIViewController;
-    }
-  }
-
-  private requireLibraryName(): string {
-    if (this.libraryName === undefined) {
-      throw new Error("controller is undefined")
-    } else {
-      return this.libraryName;
     }
   }
 

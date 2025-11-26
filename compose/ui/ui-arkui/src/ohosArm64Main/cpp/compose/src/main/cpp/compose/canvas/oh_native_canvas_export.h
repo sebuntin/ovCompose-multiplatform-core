@@ -16,8 +16,9 @@
  */
 
 #include <napi/native_api.h>
+#include <arkui/native_type.h>
 #include <native_drawing/drawing_types.h>
-
+#include "../constants/oh_native_enums.h"
 #include "../constants/oh_native_constants.h"
 
 #ifndef ANDROIDX_COMPOSE_UI_ARKUI_UTILS_OHNATIVECANVAS_EXPORT_H
@@ -29,6 +30,11 @@ void androidx_compose_ui_arkui_utils_DisposeOHNativeCanvasProxy(OHNativeCanvasPr
 void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_beginDraw(OHNativeCanvasProxy_Handle proxyHandle);
 OHComposeNativePaint_Handle androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_Paint(OHNativeCanvasProxy_Handle proxy);
 void androidx_compose_ui_arkui_utils_DisposeOHComposeNativePaint(OHComposeNativePaint_Handle paintHandle);
+
+//interop methods
+BaseRenderNode_Handle androidx_compose_ui_arkui_utils_get_interop_render_node(InteropWrapNode_Handle wrappingView);
+InteropWrapNode_Handle androidx_compose_ui_arkui_utils_create_mixed_view(const char* name, napi_value parameter);
+napi_value androidx_compose_ui_arkui_utils_get_jsArkUIView(InteropWrapNode_Handle wrappingView);
 
 // OHNativeCanvasProxy state operations
 void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_save(OHNativeCanvasProxy_Handle proxy);
@@ -58,8 +64,10 @@ void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawRect(OHNativeCanvas
                                                                   float top, float right, float bottom,
                                                                   OHComposeNativePaint_Handle paint);
 void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_finishDraw(OHNativeCanvasProxy_Handle proxy);
-void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawLayer(OHNativeCanvasProxy_Handle proxy,
-                                                                   BaseRenderNode_Handle renderNodeHandle);
+void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawInteropLayer(OHNativeCanvasProxy_Handle proxy,
+                                                                          BaseRenderNode_Handle renderNodeHandle,
+                                                                          InteropWrapNode_Handle wrappingView,
+                                                                          float density);
 void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_drawParagraph(OHNativeCanvasProxy_Handle proxy,
                                                                        BaseRenderNode_Handle paragraphHandle);
 void androidx_compose_ui_arkui_utils_OHNativeCanvasProxy_attachToRootView(OHNativeCanvasProxy_Handle proxy);

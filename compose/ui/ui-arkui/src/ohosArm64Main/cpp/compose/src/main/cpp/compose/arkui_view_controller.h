@@ -34,7 +34,7 @@ void ArkUIViewController_setUIContext(ArkUIViewController *controller, napi_valu
 void ArkUIViewController_setMessenger(ArkUIViewController *controller, napi_value messenger);
 void ArkUIViewController_setXComponentRender(ArkUIViewController *controller, void *render);
 void *ArkUIViewController_getXComponentRender(ArkUIViewController *controller);
-void ArkUIViewController_setRootView(ArkUIViewController *controller, napi_value backRootView, napi_value foreRootView,
+bool ArkUIViewController_setRootView(ArkUIViewController *controller, napi_value backRootView, napi_value foreRootView,
                                      napi_value touchableRootView);
 void ArkUIViewController_aboutToAppear(ArkUIViewController *controller);
 void ArkUIViewController_aboutToDisappear(ArkUIViewController *controller);
